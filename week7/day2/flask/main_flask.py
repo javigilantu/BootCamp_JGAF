@@ -1,17 +1,17 @@
 from flask import Flask, request, render_template
 from utils.functions import read_json
-import json, os
+import os
 
 # Mandatory
-app = Flask(__name__) # __name__ --> __main__( si ejecuto desde el terminal) o el nombre del fichero( si no ejecutas desde el main)
+app = Flask(__name__)  # __name__ --> __main__  
 
 # ---------- Flask functions ----------
-@app.route("/")  # @--> estas cosas se llaman decoradores
+@app.route("/")  # @ --> esto representa el decorador de la función
 def home():
     """ Default path """
     return app.send_static_file('greet.html')
 
-@app.route("/greet")  # capacidad para ejecutar archivos HTML
+@app.route("/greet")
 def greet():
     username = request.args.get('name')
     return render_template('index.html', name=username)
@@ -20,28 +20,31 @@ def greet():
 def create_json():
     return '{"clave":"valor", "clave_2":3}'
 
-@app.route('/give_me_id', methods=['GET']) # esta necesita que se le de info
+@app.route('/give_me_id', methods=['GET'])
 def give_id():
-    x = request.args['id']
-    return request.args
-#?id=6 el 6 no es necesario ( ? nombre de la variable = valor de la variable)
-# & (añadiendo el & puedes meter más variables )
+    x = request.args['password']
+    if x == "12345":
+        return request.args
+    else:
+        return "No es el identificador correcto"
+
 # ---------- Other functions ----------
 
 def main():
     print("---------STARTING PROCESS---------")
-    print(os.path.dirname(os.getcwd()))
+    print(__file__)
     
     # Get the settings fullpath
     # \\ --> WINDOWS
     # / --> UNIX
-    settings_file = os.path.dirname(__file__) + os.sep +"settings.json"
-    # Load json from file 
+    settings_file = os.path.dirname(__file__) + os.sep + "settings.json"
+    print(settings_file)
+    # Load json from file
     json_readed = read_json(fullpath=settings_file)
     
     # Load variables from jsons
     SERVER_RUNNING = json_readed["server_running"]
-    
+    print("SERVER_RUNNING", SERVER_RUNNING)
     if SERVER_RUNNING:
         DEBUG = json_readed["debug"]
         HOST = json_readed["host"]
